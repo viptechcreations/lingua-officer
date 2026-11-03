@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LINGUA OFFICER — Basic to SSB English Mastery Path</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Nunito', 'Noto Sans Devanagari', sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      user-select: none;
+    }
+    /* Duolingo-style 3D tactile buttons */
+    .duo-btn-green {
+      background-color: #22C55E;
+      border-bottom: 4px solid #15803D;
+      color: white;
+      transition: all 0.1s;
+    }
+    .duo-btn-green:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+    .duo-btn-blue {
+      background-color: #3B82F6;
+      border-bottom: 4px solid #1D4ED8;
+      color: white;
+      transition: all 0.1s;
+    }
+    .duo-btn-blue:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+    .duo-btn-white {
+      background-color: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-bottom: 4px solid #CBD5E1;
+      color: #1E293B;
+      transition: all 0.1s;
+    }
+    .duo-btn-white:hover {
+      background-color: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+    .duo-btn-white:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+    .duo-node {
+      width: 78px;
+      height: 78px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.15s;
+      position: relative;
+    }
+    .duo-node:hover {
+      transform: scale(1.06);
+    }
+    .duo-node:active {
+      transform: translateY(3px);
+    }
+    .word-tile {
+      background: #FFFFFF;
+      border: 2px solid #CBD5E1;
+      border-bottom: 4px solid #94A3B8;
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      color: #1E293B;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .word-tile:hover {
+      background: #F0F9FF;
+      border-color: #38BDF8;
+      border-bottom-color: #0284C7;
+    }
+    .word-tile:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP NAVIGATION BAR (Light, Clean, Duolingo Style) -->
+  <header class="sticky top-0 z-30 bg-white border-b-2 border-slate-200 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-500 border-b-4 border-emerald-700 flex items-center justify-center text-white text-2xl font-black shadow-sm">
+          ★
+        </div>
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-slate-800 leading-none">LINGUA OFFICER</h1>
+          <p class="text-xs font-bold text-slate-500 mt-0.5">Basic (Zero) to SSB Officer Spoken & Written Path</p>
+        </div>
+      </div>
+
+      <!-- Navigation Pills -->
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('path')" id="tab-path" class="px-4 py-2 rounded-xl font-extrabold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-300">
+          🗺️ Learning Path
+        </button>
+        <button onclick="switchTab('dictionary')" id="tab-dictionary" class="px-4 py-2 rounded-xl font-extrabold text-sm text-slate-600 hover:bg-slate-100 border-2 border-transparent">
+          📖 Speaking Vault
+        </button>
+        <button onclick="switchTab('mistakes')" id="tab-mistakes" class="px-4 py-2 rounded-xl font-extrabold text-sm text-slate-600 hover:bg-slate-100 border-2 border-transparent">
+          🎯 Mistakes (<span id="mistake-count">0</span>)
+        </button>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 rounded-xl font-black text-amber-600 text-sm">
+          🔥 <span id="stat-streak">1</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-blue-50 border-2 border-blue-200 px-3 py-1.5 rounded-xl font-black text-blue-600 text-sm">
+          💎 <span id="stat-xp">0</span> XP
+        </div>
+        <button onclick="toggleUnlockAll()" id="unlock-btn" class="px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">
+          🔓 Unlock All Lessons
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 py-6">
+
+    <!-- TAB 1: DUOLINGO LEARNING PATH -->
+    <section id="view-path" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left/Center: Winding Units Map -->
+      <div class="lg:col-span-2 space-y-10" id="units-container"></div>
+
+      <!-- Right Sidebar: Officer Rank & Quick Tips -->
+      <div class="space-y-6">
+        <div class="bg-white rounded-3xl border-2 border-slate-200 p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">Current Cadre</span>
+            <span id="progress-percent" class="text-sm font-black text-slate-700">0% Complete</span>
+          </div>
+          <h2 id="rank-title" class="text-2xl font-black text-slate-800">Level 1: Cadet Starter</h2>
+          <p class="text-sm text-slate-500 font-semibold mt-1">रोज़ 2 लेसन पूरे करें। हर लेसन में पहले हिंदी-अंग्रेजी नियम (Guidebook) पढ़ें और फिर बोलकर व वाक्य बनाकर अभ्यास करें।</p>
+          <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden mt-4 border border-slate-200">
+            <div id="overall-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border-2 border-slate-200 p-6 shadow-sm">
+          <h3 class="text-lg font-black text-slate-800 mb-2">🎧 Voice & Audio Check</h3>
+          <p class="text-sm text-slate-600 font-semibold mb-4">हर अंग्रेजी वाक्य के साथ 🔊 (Normal) और 🐢 (Slow) बटन हैं ताकि आपका उच्चारण (Pronunciation) एकदम साफ हो।</p>
+          <button onclick="speakText('Welcome Gentleman Cadet. Let us master English from basic to SSB officer level.', 1)" class="w-full duo-btn-blue py-3 rounded-2xl font-extrabold text-sm">
+            🔊 Test Officer Voice Audio
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DAILY SPEAKING & SSB VAULT -->
+    <section id="view-dictionary" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl border-2 border-slate-200 p-6">
+        <h2 class="text-2xl font-black text-slate-800">📖 Basic to SSB Speaking Sentence Vault</h2>
+        <p class="text-slate-600 font-semibold text-sm mt-1">यहाँ सभी लेसन्स के सबसे महत्वपूर्ण हिंदी से अंग्रेजी वाक्य दिए गए हैं। 🔊 पर क्लिक करके सुनें और ज़ोर से बोलकर अभ्यास करें।</p>
+        <div id="vault-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MISTAKES REVIEW -->
+    <section id="view-mistakes" class="hidden space-y-6">
+      <div class="bg-white rounded-3xl border-2 border-slate-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-black text-slate-800">🎯 Your Mistake Review Box</h2>
+            <p class="text-slate-600 font-semibold text-sm mt-1">प्रैक्टिस के दौरान जिन वाक्यों में गलती हुई है, वे यहाँ सेव होते हैं ताकि आपकी कोई कमज़ोरी न बचे।</p>
+          </div>
+          <button onclick="clearMistakes()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-rose-50 text-rose-600 border-2 border-rose-200 hover:bg-rose-100">
+            Clear All
+          </button>
+        </div>
+        <div id="mistakes-list" class="space-y-3 mt-6"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FULLSCREEN INTERACTIVE LESSON MODAL (DUOLINGO ENGINE) -->
+  <div id="lesson-modal" class="fixed inset-0 z-50 bg-white hidden flex-col">
+    <!-- Modal Top Progress Bar -->
+    <div class="max-w-3xl w-full mx-auto px-4 pt-5 pb-3 flex items-center gap-4">
+      <button onclick="closeLesson()" class="text-slate-400 hover:text-slate-700 text-2xl font-black px-2">✕</button>
+      <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+        <div id="lesson-progress-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 10%"></div>
+      </div>
+      <span id="lesson-step-label" class="text-sm font-black text-slate-600">Guide</span>
+    </div>
+
+    <!-- Modal Center Dynamic Stage -->
+    <div class="flex-1 overflow-y-auto px-4 py-6">
+      <div id="lesson-stage" class="max-w-2xl w-full mx-auto"></div>
+    </div>
+
+    <!-- Modal Bottom Action Bar -->
+    <div id="lesson-footer" class="border-t-2 border-slate-200 bg-white px-4 py-4">
+      <div class="max-w-2xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div id="feedback-banner" class="text-sm font-bold text-slate-600">
+          Read carefully and complete the step.
+        </div>
+        <button id="lesson-action-btn" onclick="handleLessonPrimaryAction()" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-base duo-btn-green">
+          START PRACTICE →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================================
+    // COMPLETE ERROR-FREE CURRICULUM: 8 UNITS (BASIC ZERO TO SSB OFFICER LEVEL)
+    // ============================================================================
+    const CURRICULUM = [
+      {
+        unitId: 1,
+        title: "Unit 1: Zero Foundation (बिल्कुल शुरुआत से)",
+        subtitle: "Is/Am/Are, Has/Have, और अपनी पहचान व स्थिति बताना",
+        color: "emerald",
+        lessons: [
+          {
+            id: "u1l1",
+            title: "Is / Am / Are (वर्तमान में होना)",
+            ruleHindi: "जब किसी वाक्य में कोई क्रिया (काम) न हो और सिर्फ यह बताना हो कि कोई व्यक्ति या वस्तु कैसी है या कहाँ है, तब Is (एकवचन), Am (मैं के साथ), और Are (बहुवचन/You) लगाते हैं।",
+            formula: "Subject + is / am / are + Noun / Adjective",
+            examples: [
+              { hi: "मैं एक अनुशासित छात्र हूँ।", en: "I am a disciplined student." },
+              { hi: "वह शारीरिक रूप से स्वस्थ है।", en: "He is physically fit." },
+              { hi: "हम किसी भी चुनौती के लिए तैयार हैं।", en: "We are ready for any challenge." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मैं एक जिम्मेदार नागरिक हूँ।",
+                answerEn: "I am a responsible citizen",
+                distractors: ["is", "are", "responsibility"]
+              },
+              {
+                type: "mcq",
+                promptHi: "सही वाक्य चुनें: 'वे मेरे टीम के सदस्य हैं।'",
+                options: [
+                  "They are my team members.",
+                  "They is my team members.",
+                  "They am my team member."
+                ],
+                correctIndex: 0,
+                explanation: "'They' बहुवचन (Plural) है, इसलिए इसके साथ 'are' का प्रयोग होता है।"
+              },
+              {
+                type: "wordbank",
+                promptHi: "वह अपने लक्ष्य के प्रति गंभीर है।",
+                answerEn: "He is serious about his goal",
+                distractors: ["are", "am", "on"]
+              },
+              {
+                type: "speak",
+                promptHi: "इस वाक्य को साफ़ आवाज़ में बोलें:",
+                answerEn: "We are completely ready for the test."
+              }
+            ]
+          },
+          {
+            id: "u1l2",
+            title: "Was / Were (बीते समय में होना)",
+            ruleHindi: "बीते हुए कल (Past) में किसी व्यक्ति या चीज़ की स्थिति बताने के लिए I/He/She/Singular के साथ 'Was' और We/You/They/Plural के साथ 'Were' आता है।",
+            formula: "Subject + was / were + Complement",
+            examples: [
+              { hi: "कल मौसम बहुत खराब था।", en: "The weather was very rough yesterday." },
+              { hi: "वे मैदान पर समय से मौजूद थे।", en: "They were present on the ground on time." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "कप्तान अपनी टीम से बहुत खुश था।",
+                answerEn: "The captain was very happy with his team",
+                distractors: ["were", "is", "from"]
+              },
+              {
+                type: "mcq",
+                promptHi: "'हम कल शाम स्टेडियम में थे।' का सही अनुवाद क्या है?",
+                options: [
+                  "We were at the stadium yesterday evening.",
+                  "We was at the stadium yesterday evening.",
+                  "We are at the stadium yesterday evening."
+                ],
+                correctIndex: 0,
+                explanation: "'We' के साथ Past में हमेशा 'were' लगता है।"
+              },
+              {
+                type: "speak",
+                promptHi: "इस वाक्य को ज़ोर से बोलकर अभ्यास करें:",
+                answerEn: "It was a great learning experience for me."
+              }
+            ]
+          },
+          {
+            id: "u1l3",
+            title: "Has / Have / Had (पास होना या अधिकार)",
+            ruleHindi: "जब बताना हो कि हमारे पास कोई वस्तु, गुण या अनुभव है: I/We/You/They के साथ 'Have', He/She/It के साथ 'Has', और Past में सभी के साथ 'Had' लगता है।",
+            formula: "Subject + has / have / had + Object",
+            examples: [
+              { hi: "मेरे पास इस समस्या का व्यावहारिक समाधान है।", en: "I have a practical solution to this problem." },
+              { hi: "उसके पास नेतृत्व का अच्छा अनुभव है।", en: "He has good leadership experience." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "हमारे पास तैयारी के लिए पर्याप्त समय है।",
+                answerEn: "We have enough time for preparation",
+                distractors: ["has", "is", "timings"]
+              },
+              {
+                type: "mcq",
+                promptHi: "'उसके पास इस विषय की गहरी जानकारी है।' — सही विकल्प चुनें:",
+                options: [
+                  "She has deep knowledge of this subject.",
+                  "She have deep knowledge of this subject.",
+                  "She is having deep knowledge of this subject."
+                ],
+                correctIndex: 0,
+                explanation: "She (एकवचन) के साथ अधिकार/गुण बताने के लिए 'has' लगता है, 'is having' नहीं।"
+              },
+              {
+                type: "speak",
+                promptHi: "बोलकर अभ्यास करें:",
+                answerEn: "I have a clear plan for my career."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 2,
+        title: "Unit 2: Present Tenses (रोज़मर्रा की आदतें और वर्तमान काम)",
+        subtitle: "अपनी Daily Routine, आदतें और चल रहे काम को बिना अटके बताना",
+        color: "blue",
+        lessons: [
+          {
+            id: "u2l1",
+            title: "Present Indefinite (ता है / ती है — Daily Routine)",
+            ruleHindi: "अपनी रोज़ की दिनचर्या (Daily Routine) और आदतें बताने के लिए Verb की First Form (V1) आती है। ध्यान रहे: He/She/It/Singular के साथ Verb में 's' या 'es' जुड़ता है।",
+            formula: "I/We/You/They + V1 | He/She/It + V1(s/es)",
+            examples: [
+              { hi: "मैं रोज़ सुबह 5 बजे उठता हूँ।", en: "I wake up at five every morning." },
+              { hi: "वह रोज़ अखबार पढ़ता है।", en: "He reads the newspaper daily." },
+              { hi: "मैं समय बर्बाद नहीं करता हूँ।", en: "I do not waste time." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मैं अपनी फिटनेस के लिए रोज़ दौड़ता हूँ।",
+                answerEn: "I run daily for my fitness",
+                distractors: ["am", "running", "runs"]
+              },
+              {
+                type: "mcq",
+                promptHi: "SSB Interview में अपनी आदत बताने के लिए कौन-सा वाक्य सही है?",
+                options: [
+                  "He maintains discipline in every situation.",
+                  "He maintain discipline in every situation.",
+                  "He is maintain discipline in every situation."
+                ],
+                correctIndex: 0,
+                explanation: "He (Third Person Singular) के साथ Verb में 's' (maintains) लगना अनिवार्य है।"
+              },
+              {
+                type: "wordbank",
+                promptHi: "वह कठिन परिस्थितियों से नहीं डरता है।",
+                answerEn: "He does not fear difficult situations",
+                distractors: ["do", "fears", "is"]
+              },
+              {
+                type: "speak",
+                promptHi: "अपनी दिनचर्या का यह वाक्य बोलें:",
+                answerEn: "I follow my daily schedule strictly."
+              }
+            ]
+          },
+          {
+            id: "u2l2",
+            title: "Present Continuous & Perfect (रहा है / चुका है)",
+            ruleHindi: "जो काम अभी चल रहा है उसके लिए 'is/am/are + V-ing' और जो काम अभी-अभी पूरा हुआ है उसके लिए 'has/have + V3 (Third Form)' लगाते हैं।",
+            formula: "Continuous: is/am/are + V-ing | Perfect: has/have + V3",
+            examples: [
+              { hi: "मैं अभी अपनी संचार कौशल (Communication Skills) सुधार रहा हूँ।", en: "I am improving my communication skills right now." },
+              { hi: "मैंने अपना स्नातक पाठ्यक्रम सफलतापूर्वक पूरा कर लिया है।", en: "I have completed my graduation course successfully." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मैंने सभी निर्देश ध्यान से पढ़ लिए हैं।",
+                answerEn: "I have read all the instructions carefully",
+                distractors: ["has", "reading", "am"]
+              },
+              {
+                type: "mcq",
+                promptHi: "'हम पिछले दो सालों से इस प्रोजेक्ट पर काम कर रहे हैं।' (समय के साथ काम जारी रहना):",
+                options: [
+                  "We have been working on this project for two years.",
+                  "We are working on this project since two years.",
+                  "We work on this project for two years."
+                ],
+                correctIndex: 0,
+                explanation: "जब काम भूतकाल में शुरू होकर अभी भी चल रहा हो और समय (for two years) दिया हो, तो 'have/has been + V-ing' लगता है।"
+              },
+              {
+                type: "speak",
+                promptHi: "बोलकर अभ्यास करें:",
+                answerEn: "I have prepared thoroughly for this examination."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 3,
+        title: "Unit 3: Past Tense & Storytelling (कहानी सुनाने की कला)",
+        subtitle: "Simple Past & Past Perfect — PPDT और TAT स्टोरी के लिए सबसे ज़रूरी",
+        color: "amber",
+        lessons: [
+          {
+            id: "u3l1",
+            title: "Simple Past (किया / गया / देखा — V2)",
+            ruleHindi: "SSB की PPDT और TAT कहानियाँ हमेशा Past Tense में लिखी और सुनाई जाती हैं। सकारात्मक वाक्य में Verb की 2nd Form (V2) लगती है और नकारात्मक में 'did not + V1' आता है।",
+            formula: "Affirmative: Subject + V2 | Negative: Subject + did not + V1",
+            examples: [
+              { hi: "राम ने तुरंत स्थिति को संभाला।", en: "Ram immediately took charge of the situation." },
+              { hi: "उसने घायल व्यक्ति को अस्पताल पहुँचाया।", en: "He shifted the injured person to the hospital." },
+              { hi: "उन्होंने हिम्मत नहीं हारी।", en: "They did not lose courage." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "अमन ने गाँव के युवाओं की एक टीम बनाई।",
+                answerEn: "Aman organized a team of village youth",
+                distractors: ["organize", "is", "organizing"]
+              },
+              {
+                type: "mcq",
+                promptHi: "ध्यान दें: 'Did' के साथ हमेशा कौन-सी फॉर्म आती है?",
+                options: [
+                  "He did not panic during the emergency.",
+                  "He did not panicked during the emergency.",
+                  "He was not panicked during the emergency."
+                ],
+                correctIndex: 0,
+                explanation: "'did not' के बाद हमेशा Verb की First Form (panic) आती है, 'panicked' कभी नहीं।"
+              },
+              {
+                type: "wordbank",
+                promptHi: "उन्होंने समय पर अपना मिशन पूरा किया।",
+                answerEn: "They accomplished their mission on time",
+                distractors: ["accomplish", "have", "in"]
+              },
+              {
+                type: "speak",
+                promptHi: "एक ऑफिसर की तरह स्टोरी लाइन बोलें:",
+                answerEn: "He immediately analyzed the problem and took decisive action."
+              }
+            ]
+          },
+          {
+            id: "u3l2",
+            title: "Past Continuous & Past Perfect (जब दो घटनाएँ घटीं)",
+            ruleHindi: "जब अतीत में एक काम चल रहा था (was/were + V-ing) और दूसरा काम घटा (V2), या एक काम पहले ही पूरा हो चुका था (had + V3)।",
+            formula: "While + was/were V-ing, Subject + V2 | Had + V3 before V2",
+            examples: [
+              { hi: "जब वह घर लौट रहा था, उसने सड़क पर एक दुर्घटना देखी।", en: "While he was returning home, he witnessed an accident on the road." },
+              { hi: "बारिश शुरू होने से पहले हमने टेंट लगा लिया था।", en: "We had pitched the tent before the rain started." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "पुलिस के आने से पहले उन्होंने आग बुझा दी थी।",
+                answerEn: "They had extinguished the fire before the police arrived",
+                distractors: ["have", "extinguish", "arrive"]
+              },
+              {
+                type: "mcq",
+                promptHi: "सही वाक्य चुनें:",
+                options: [
+                  "While I was jogging in the stadium, I met my coach.",
+                  "While I jogged in the stadium, I was meeting my coach.",
+                  "While I am jogging in the stadium, I met my coach."
+                ],
+                correctIndex: 0,
+                explanation: "जो लंबा काम चल रहा था वह Past Continuous (was jogging) में और जो छोटी घटना बीच में हुई वह Simple Past (met) में रहती है।"
+              },
+              {
+                type: "speak",
+                promptHi: "बोलकर अभ्यास करें:",
+                answerEn: "While he was crossing the bridge, he noticed a drowning child."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 4,
+        title: "Unit 4: Future, Modals & Polite Authority",
+        subtitle: "Can, Could, Should, Must, Would का सटीक और प्रभावशाली इस्तेमाल",
+        color: "purple",
+        lessons: [
+          {
+            id: "u4l1",
+            title: "Can, Could, Should & Must (क्षमता, सलाह और कर्तव्य)",
+            ruleHindi: "सभी Modals (can, could, should, must, will, would) के बाद हमेशा Verb की 1st Form (V1) आती है। अगर काम होने की स्थिति बतानी हो तो 'Modal + be' और Past के लिए 'should have + V3' लगता है।",
+            formula: "Subject + Modal (can/should/must) + V1",
+            examples: [
+              { hi: "हमें यातायात नियमों का सख्ती से पालन करना चाहिए।", en: "We must follow traffic rules strictly." },
+              { hi: "मैं दबाव में भी शांत रह सकता हूँ।", en: "I can remain calm even under pressure." },
+              { hi: "सरकार को ग्रामीण शिक्षा पर अधिक ध्यान देना चाहिए।", en: "The government should focus more on rural education." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "हमें अपने माता-पिता और शिक्षकों का सम्मान करना चाहिए।",
+                answerEn: "We must respect our parents and teachers",
+                distractors: ["to", "respects", "shoulds"]
+              },
+              {
+                type: "mcq",
+                promptHi: "Lecturette में सुझाव देने के लिए सबसे सटीक वाक्य कौन-सा है?",
+                options: [
+                  "Citizens should actively participate in cleanliness drives.",
+                  "Citizens should to actively participate in cleanliness drives.",
+                  "Citizens should actively participated in cleanliness drives."
+                ],
+                correctIndex: 0,
+                explanation: "'Should' के बाद कभी 'to' या 2nd/3rd form नहीं आती, सीधे 'participate' (V1) आता है।"
+              },
+              {
+                type: "speak",
+                promptHi: "बोलकर अभ्यास करें:",
+                answerEn: "Every citizen must contribute to national development."
+              }
+            ]
+          },
+          {
+            id: "u4l2",
+            title: "Would & Could in Polite GD/Interview Speech",
+            ruleHindi: "इंटरव्यू या ग्रुप डिस्कशन में विनम्रता से अपनी राय रखने के लिए 'I would like to...' या 'Could you please...' का प्रयोग एक ऑफिसर जैसा प्रभाव डालता है।",
+            formula: "I would like to + V1 | It would be better to + V1",
+            examples: [
+              { hi: "मैं इस मुद्दे पर तीन मुख्य बिंदु रखना चाहूँगा।", en: "I would like to highlight three key points on this issue." },
+              { hi: "मैं अपने मित्र की बात में एक बिंदु जोड़ना चाहूँगा।", en: "I would like to add a point to what my friend stated." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मैं इस चर्चा की शुरुआत करना चाहूँगा।",
+                answerEn: "I would like to initiate this discussion",
+                distractors: ["will", "liked", "initiating"]
+              },
+              {
+                type: "speak",
+                promptHi: "GD की यह शुरुआती लाइन आत्मविश्वास से बोलें:",
+                answerEn: "I would like to draw everyone's attention to the root cause."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 5,
+        title: "Unit 5: Connectors, Conditionals & Complex Sentences",
+        subtitle: "Although, Despite, Unless, और If I were... से बड़े वाक्य बनाना",
+        color: "emerald",
+        lessons: [
+          {
+            id: "u5l1",
+            title: "Although / Despite / Not only...But also",
+            ruleHindi: "दो विचारों को जोड़ने के लिए: 'Although' (यद्यपि) के बाद पूरा वाक्य (Subject + Verb) आता है, जबकि 'Despite' या 'In spite of' (के बावजूद) के बाद केवल Noun या V-ing आता है। ध्यान रहे: 'Despite' के साथ कभी 'of' नहीं लगता!",
+            formula: "Although + Sub + Verb | Despite + Noun/V-ing (NO 'of')",
+            examples: [
+              { hi: "सीमित संसाधनों के बावजूद उसने परीक्षा पास की।", en: "Despite limited resources, he cleared the examination." },
+              { hi: "हालांकि चुनौती बड़ी थी, फिर भी टीम सफल रही।", en: "Although the challenge was big, the team succeeded." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "भारी बारिश के बावजूद हमने अपनी दौड़ पूरी की।",
+                answerEn: "Despite heavy rain we completed our run",
+                distractors: ["of", "Although", "completing"]
+              },
+              {
+                type: "mcq",
+                promptHi: "UPSC CDS का सबसे प्रसिद्ध नियम: इनमें से कौन-सा वाक्य 100% शुद्ध है?",
+                options: [
+                  "Despite working hard, he could not make it to the merit list.",
+                  "Despite of working hard, he could not make it to the merit list.",
+                  "Although working hard, he could not make it to the merit list."
+                ],
+                correctIndex: 0,
+                explanation: "'Despite' का अर्थ ही 'In spite of' होता है, इसलिए 'Despite' के बाद 'of' लगाना गलत (Error) है।"
+              },
+              {
+                type: "speak",
+                promptHi: "यह एडवांस्ड वाक्य बोलकर अभ्यास करें:",
+                answerEn: "Not only does sports build stamina, but it also teaches teamwork."
+              }
+            ]
+          },
+          {
+            id: "u5l2",
+            title: "Conditionals (If I were / Had I known)",
+            ruleHindi: "काल्पनिक स्थिति (अगर मैं आपकी जगह होता) के लिए 'If I were..., I would + V1' और बीते समय की शर्त के लिए 'If he had worked..., he would have + V3' का प्रयोग होता है।",
+            formula: "If + Sub + were..., Sub + would + V1",
+            examples: [
+              { hi: "अगर मैं टीम लीडर होता, तो मैं सबसे पहले सुरक्षा सुनिश्चित करता।", en: "If I were the team leader, I would ensure safety first." },
+              { hi: "जब तक हम जड़ पर काम नहीं करेंगे, समस्या हल नहीं होगी।", en: "Unless we address the root cause, the problem will not be solved." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "अगर मैं उस स्थिति में होता तो मैं तुरंत पुलिस को सूचित करता।",
+                answerEn: "If I were in that situation I would inform the police immediately",
+                distractors: ["was", "will", "informed"]
+              },
+              {
+                type: "mcq",
+                promptHi: "'Unless' (जब तक नहीं) के नियम के अनुसार सही वाक्य चुनें:",
+                options: [
+                  "Unless you practice daily, you cannot achieve fluency.",
+                  "Unless you do not practice daily, you cannot achieve fluency.",
+                  "Unless you will not practice daily, you cannot achieve fluency."
+                ],
+                correctIndex: 0,
+                explanation: "'Unless' और 'Until' खुद नकारात्मक शब्द हैं, इसलिए इनके वाले हिस्से में 'do not / will not' नहीं लगता।"
+              },
+              {
+                type: "speak",
+                promptHi: "SRT/Interview का यह वाक्य बोलें:",
+                answerEn: "If I were the captain, I would motivate my team and lead from the front."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 6,
+        title: "Unit 6: UPSC CDS Grammar Golden Rules & Indianism Fixer",
+        subtitle: "आम बोलचाल की गलतियाँ सुधारें और CDS Written + SSB में सटीक बोलें",
+        color: "blue",
+        lessons: [
+          {
+            id: "u6l1",
+            title: "Eliminating Common Indianisms (सही बनाम गलत अंग्रेजी)",
+            ruleHindi: "हम अक्सर हिंदी से सीधा अनुवाद करते समय 'Discuss about', 'Return back', 'Cousin brother', या 'According to me' बोल देते हैं, जो व्याकरण की दृष्टि से गलत हैं।",
+            formula: "Discuss + Object (No 'about') | In my opinion (Not 'According to me')",
+            examples: [
+              { hi: "मेरे विचार से शिक्षा सबसे बड़ा हथियार है।", en: "In my opinion, education is the most powerful weapon." },
+              { hi: "हमने समूह में इस गंभीर मुद्दे पर चर्चा की।", en: "We discussed this serious issue in the group." },
+              { hi: "मैंने पिछले साल अपनी स्नातक की परीक्षा पास की।", en: "I graduated last year." }
+            ],
+            exercises: [
+              {
+                type: "mcq",
+                promptHi: "GD में बोलने के लिए कौन-सा वाक्य व्याकरण के हिसाब से बिल्कुल सही है?",
+                options: [
+                  "Let us discuss the economic impact of this policy.",
+                  "Let us discuss about the economic impact of this policy.",
+                  "Let us discuss on the economic impact of this policy."
+                ],
+                correctIndex: 0,
+                explanation: "'Discuss', 'Describe', 'Explain' के तुरंत बाद 'about' नहीं लगता (Discuss = talk about)।"
+              },
+              {
+                type: "wordbank",
+                promptHi: "मेरे विचार से हमें नवीकरणीय ऊर्जा को बढ़ावा देना चाहिए।",
+                answerEn: "In my opinion we should promote renewable energy",
+                distractors: ["According", "to", "me"]
+              },
+              {
+                type: "speak",
+                promptHi: "बोलकर अभ्यास करें:",
+                answerEn: "In my perspective, balanced development is the need of the hour."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        unitId: 7,
+        title: "Unit 7: SSB Officer Spoken Mastery (PPDT, GD & Interview)",
+        subtitle: "Screening से लेकर Conference तक हर स्टेज के रेडीमेड ऑफिसर वाक्य",
+        color: "amber",
+        lessons: [
+          {
+            id: "u7l1",
+            title: "PPDT 60-Second Story Narration Mastery",
+            ruleHindi: "Day-1 Screening में अपनी कहानी शुरू करते समय आत्मविश्वास के साथ किरदारों की संख्या, उम्र, मूड और मुख्य समस्या (Action) को 45-55 सेकंड में साफ अंग्रेजी में रखें।",
+            formula: "Perception → Central Character → Problem → Action Taken → Positive Outcome",
+            examples: [
+              { hi: "सज्जनों, इस चित्र में मुझे तीन पात्र दिखाई दे रहे हैं।", en: "Gentlemen, through this picture I perceive three characters." },
+              { hi: "मेरी कहानी का मुख्य पात्र राघव है, जो 22 वर्ष का एक बी.एससी. छात्र है।", en: "The central character of my story is Raghav, a twenty-two-year-old science student." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मेरी कहानी का मुख्य विषय ग्रामीण विद्युतीकरण है।",
+                answerEn: "The central theme of my story is rural electrification",
+                distractors: ["in", "characters", "are"]
+              },
+              {
+                type: "speak",
+                promptHi: "PPDT की यह ओपनिंग लाइन बिना अटके बोलें:",
+                answerEn: "Gentlemen, through the picture I perceive three characters in a positive mood."
+              }
+            ]
+          },
+          {
+            id: "u7l2",
+            title: "GD & Personal Interview Officer Responses",
+            ruleHindi: "GD में बिना चिल्लाए तार्किक बात रखना और Personal Interview में ईमानदारी व स्पष्टता से जवाब देना ही असली Officer Like Quality (OLQ) है।",
+            formula: "Acknowledge + Add Dimension + Provide Practical Way Forward",
+            examples: [
+              { hi: "मैं चेस्ट नंबर 8 की बात से सहमत हूँ और इसमें एक व्यावहारिक पहलू जोड़ना चाहता हूँ।", en: "I agree with Chest Number eight and would like to add a practical dimension." },
+              { hi: "सर, मैं भारतीय सेना में शामिल होना चाहता हूँ क्योंकि यह मुझे नेतृत्व और देश सेवा का अवसर देती है।", en: "Sir, I aspire to join the Indian Armed Forces for the leadership challenges and service to the nation." }
+            ],
+            exercises: [
+              {
+                type: "wordbank",
+                promptHi: "मैं इस मुद्दे के समाधान की ओर सबका ध्यान दिलाना चाहूँगा।",
+                answerEn: "I would like to steer the discussion towards practical solutions",
+                distractors: ["will", "for", "solution"]
+              },
+              {
+                type: "speak",
+                promptHi: "Interviewing Officer के सामने बोलने का अभ्यास करें:",
+                answerEn: "Sir, I built a web application to organize my daily defence preparation."
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    // ============================================================================
+    // STATE MANAGEMENT & PERSISTENCE
+    // ============================================================================
+    let state = JSON.parse(localStorage.getItem("lingua_officer_v1")) || {
+      xp: 0,
+      streak: 1,
+      completedLessons: [],
+      unlockAll: false,
+      mistakes: []
+    };
+
+    function saveState() {
+      localStorage.setItem("lingua_officer_v1", JSON.stringify(state));
+      updateTopBar();
+    }
+
+    // ============================================================================
+    // WEB AUDIO SOUND EFFECTS & SPEECH SYNTHESIS (TTS)
+    // ============================================================================
+    function playTone(type) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (type === "correct") {
+          osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1);
+          gain.gain.setValueAtTime(0.12, ctx.currentTime);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        } else if (type === "wrong") {
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(180, ctx.currentTime);
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    function speakText(text, rate = 1.0) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "en-IN";
+      utter.rate = rate;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // ============================================================================
+    // RENDER LEARNING PATH & VAULT
+    // ============================================================================
+    function getAllLessonsFlat() {
+      const list = [];
+      CURRICULUM.forEach(u => u.lessons.forEach(l => list.push({ ...l, unitColor: u.color })));
+      return list;
+    }
+
+    function updateTopBar() {
+      document.getElementById("stat-xp").textContent = state.xp;
+      document.getElementById("stat-streak").textContent = state.streak;
+      document.getElementById("mistake-count").textContent = state.mistakes.length;
+
+      const allLessons = getAllLessonsFlat();
+      const done = state.completedLessons.length;
+      const pct = Math.round((done / allLessons.length) * 100);
+      document.getElementById("progress-percent").textContent = `${pct}% Complete (${done}/${allLessons.length})`;
+      document.getElementById("overall-bar").style.width = `${pct}%`;
+
+      const rankEl = document.getElementById("rank-title");
+      if (pct < 25) rankEl.textContent = "Level 1: Foundation Cadet";
+      else if (pct < 60) rankEl.textContent = "Level 2: Fluent Gentleman Cadet ★";
+      else if (pct < 90) rankEl.textContent = "Level 3: SSB Ready Orator ★★";
+      else rankEl.textContent = "Level 4: Commissioned Officer ★★★";
+
+      const unlockBtn = document.getElementById("unlock-btn");
+      unlockBtn.textContent = state.unlockAll ? "✅ All Lessons Unlocked" : "🔓 Unlock All Lessons";
+      unlockBtn.className = state.unlockAll
+        ? "px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-emerald-400 bg-emerald-50 text-emerald-800"
+        : "px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200";
+    }
+
+    function toggleUnlockAll() {
+      state.unlockAll = !state.unlockAll;
+      saveState();
+      renderUnitsPath();
+    }
+
+    function renderUnitsPath() {
+      const container = document.getElementById("units-container");
+      const flat = getAllLessonsFlat();
+
+      const colorMap = {
+        emerald: { banner: "bg-emerald-500 border-emerald-700", nodeDone: "bg-emerald-500 border-b-4 border-emerald-700 text-white", nodeActive: "bg-blue-500 border-b-4 border-blue-700 text-white ring-4 ring-blue-200" },
+        blue: { banner: "bg-blue-500 border-blue-700", nodeDone: "bg-blue-500 border-b-4 border-blue-700 text-white", nodeActive: "bg-emerald-500 border-b-4 border-emerald-700 text-white ring-4 ring-emerald-200" },
+        amber: { banner: "bg-amber-500 border-amber-700", nodeDone: "bg-amber-500 border-b-4 border-amber-700 text-white", nodeActive: "bg-emerald-500 border-b-4 border-emerald-700 text-white ring-4 ring-emerald-200" },
+        purple: { banner: "bg-purple-600 border-purple-800", nodeDone: "bg-purple-600 border-b-4 border-purple-800 text-white", nodeActive: "bg-emerald-500 border-b-4 border-emerald-700 text-white ring-4 ring-emerald-200" }
+      };
+
+      container.innerHTML = CURRICULUM.map(unit => {
+        const theme = colorMap[unit.color] || colorMap.emerald;
+        const nodesHtml = unit.lessons.map((lesson, idx) => {
+          const globalIndex = flat.findIndex(item => item.id === lesson.id);
+          const isCompleted = state.completedLessons.includes(lesson.id);
+          const isUnlocked = state.unlockAll || globalIndex === 0 || state.completedLessons.includes(flat[globalIndex - 1].id) || isCompleted;
+
+          const offsetClass = idx % 2 === 1 ? "translate-x-8" : idx % 3 === 2 ? "-translate-x-8" : "";
+          let nodeStyle = "bg-slate-200 border-b-4 border-slate-300 text-slate-400";
+          let icon = "🔒";
+
+          if (isCompleted) {
+            nodeStyle = theme.nodeDone;
+            icon = "✓";
+          } else if (isUnlocked) {
+            nodeStyle = theme.nodeActive;
+            icon = "★";
+          }
+
+          return `
+            <div class="flex flex-col items-center ${offsetClass}">
+              <button onclick="${isUnlocked ? `openLesson('${lesson.id}')` : `alert('पहले पिछला लेसन पूरा करें या ऊपर Unlock All Lessons दबाएं!')`}" class="duo-node ${nodeStyle} shadow-md">
+                ${icon}
+              </button>
+              <div class="mt-2 bg-white border-2 border-slate-200 px-3.5 py-1.5 rounded-2xl shadow-sm text-center max-w-xs">
+                <p class="text-xs font-black text-slate-800">${lesson.title}</p>
+                <p class="text-[11px] font-bold ${isCompleted ? 'text-emerald-600' : isUnlocked ? 'text-blue-600' : 'text-slate-400'}">
+                  ${isCompleted ? 'Completed • Practice Again' : isUnlocked ? 'Tap to Start Lesson' : 'Locked'}
+                </p>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <div class="bg-white rounded-3xl border-2 border-slate-200 overflow-hidden shadow-sm">
+            <div class="${theme.banner} border-b-4 p-5 text-white">
+              <h2 class="text-xl font-black">${unit.title}</h2>
+              <p class="text-sm font-bold opacity-95 mt-0.5">${unit.subtitle}</p>
+            </div>
+            <div class="py-8 px-4 flex flex-col items-center space-y-6 bg-slate-50/60">
+              ${nodesHtml}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderVaultAndMistakes() {
+      const vaultEl = document.getElementById("vault-list");
+      const allExamples = [];
+      CURRICULUM.forEach(u => u.lessons.forEach(l => {
+        l.examples.forEach(ex => allExamples.push({ ...ex, lessonTitle: l.title }));
+      }));
+
+      vaultEl.innerHTML = allExamples.map(item => `
+        <div class="p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 flex items-start justify-between gap-3">
+          <div>
+            <span class="text-[11px] font-extrabold uppercase text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">${item.lessonTitle}</span>
+            <p class="text-base font-black text-slate-800 mt-1.5">${item.en}</p>
+            <p class="text-sm font-semibold text-slate-600 mt-0.5">${item.hi}</p>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button onclick="speakText(\`${item.en.replace(/`/g, '')}\`, 1)" class="px-3 py-1.5 rounded-xl bg-blue-100 text-blue-700 font-black text-xs hover:bg-blue-200">🔊</button>
+            <button onclick="speakText(\`${item.en.replace(/`/g, '')}\`, 0.7)" class="px-3 py-1.5 rounded-xl bg-amber-100 text-amber-800 font-black text-xs hover:bg-amber-200">🐢</button>
+          </div>
+        </div>
+      `).join("");
+
+      const mistakeEl = document.getElementById("mistakes-list");
+      if (state.mistakes.length === 0) {
+        mistakeEl.innerHTML = `<div class="p-8 text-center text-slate-500 font-bold">अभी तक कोई गलती रिकॉर्ड नहीं हुई है! बहुत बढ़िया! 🎉</div>`;
+      } else {
+        mistakeEl.innerHTML = state.mistakes.map(m => `
+          <div class="p-4 rounded-2xl border-2 border-rose-200 bg-rose-50/50 flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-bold text-slate-600">${m.promptHi}</p>
+              <p class="text-base font-black text-emerald-700 mt-1">✓ ${m.correctEn}</p>
+            </div>
+            <button onclick="speakText(\`${m.correctEn.replace(/`/g, '')}\`, 0.9)" class="px-3.5 py-2 rounded-xl bg-white border-2 border-slate-200 font-black text-sm">🔊 Listen</button>
+          </div>
+        `).join("");
+      }
+    }
+
+    function clearMistakes() {
+      state.mistakes = [];
+      saveState();
+      renderVaultAndMistakes();
+    }
+
+    function switchTab(tab) {
+      ["path", "dictionary", "mistakes"].forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle("hidden", t !== tab);
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tab) {
+          btn.className = "px-4 py-2 rounded-xl font-extrabold text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-300";
+        } else {
+          btn.className = "px-4 py-2 rounded-xl font-extrabold text-sm text-slate-600 hover:bg-slate-100 border-2 border-transparent";
+        }
+      });
+      if (tab !== "path") renderVaultAndMistakes();
+    }
+
+    // ============================================================================
+    // INTERACTIVE DUOLINGO LESSON ENGINE
+    // ============================================================================
+    let activeLesson = null;
+    let currentStep = -1; // -1 = Concept Guidebook, 0..n = exercises
+    let stepChecked = false;
+    let selectedWords = [];
+    let bankWords = [];
+    let selectedMcq = null;
+
+    function openLesson(lessonId) {
+      const flat = getAllLessonsFlat();
+      activeLesson = flat.find(l => l.id === lessonId);
+      if (!activeLesson) return;
+      currentStep = -1;
+      stepChecked = false;
+      document.getElementById("lesson-modal").classList.remove("hidden");
+      document.getElementById("lesson-modal").classList.add("flex");
+      renderLessonStage();
+    }
+
+    function closeLesson() {
+      document.getElementById("lesson-modal").classList.add("hidden");
+      document.getElementById("lesson-modal").classList.remove("flex");
+    }
+
+    function renderLessonStage() {
+      const stage = document.getElementById("lesson-stage");
+      const btn = document.getElementById("lesson-action-btn");
+      const banner = document.getElementById("feedback-banner");
+      const totalSteps = activeLesson.exercises.length + 1;
+      const pct = Math.round(((currentStep + 2) / (totalSteps + 1)) * 100);
+      document.getElementById("lesson-progress-bar").style.width = `${pct}%`;
+
+      stepChecked = false;
+      banner.className = "text-sm font-bold text-slate-600";
+
+      // STEP -1: HINDI + ENGLISH GUIDEBOOK
+      if (currentStep === -1) {
+        document.getElementById("lesson-step-label").textContent = "Concept Guide";
+        banner.textContent = "पहले आसान हिंदी में नियम और उदाहरण समझें, फिर प्रैक्टिस शुरू करें।";
+        btn.textContent = "START EXERCISES →";
+        btn.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-base duo-btn-green";
+
+        stage.innerHTML = `
+          <div class="space-y-6">
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-6">
+              <span class="text-xs font-black uppercase bg-emerald-600 text-white px-3 py-1 rounded-full">Lesson Guidebook</span>
+              <h2 class="text-2xl font-black text-slate-800 mt-3">${activeLesson.title}</h2>
+              <p class="text-base font-bold text-slate-700 mt-2 leading-relaxed">${activeLesson.ruleHindi}</p>
+              <div class="mt-4 bg-white border-2 border-emerald-300 rounded-2xl p-3.5 font-black text-emerald-900 text-sm">
+                📐 Formula: ${activeLesson.formula}
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-sm font-black uppercase tracking-wider text-slate-500">🔊 Tap to Listen & Repeat Aloud:</h3>
+              ${activeLesson.examples.map(ex => `
+                <div class="p-4 rounded-2xl border-2 border-slate-200 bg-white flex items-center justify-between gap-3">
+                  <div>
+                    <p class="text-lg font-black text-slate-800">${ex.en}</p>
+                    <p class="text-sm font-bold text-slate-500">${ex.hi}</p>
+                  </div>
+                  <div class="flex gap-2">
+                    <button onclick="speakText(\`${ex.en.replace(/`/g, '')}\`, 1)" class="duo-btn-white px-3.5 py-2 rounded-xl font-black text-sm">🔊</button>
+                    <button onclick="speakText(\`${ex.en.replace(/`/g, '')}\`, 0.7)" class="duo-btn-white px-3.5 py-2 rounded-xl font-black text-sm">🐢</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // COMPLETION SCREEN
+      if (currentStep >= activeLesson.exercises.length) {
+        document.getElementById("lesson-step-label").textContent = "Completed!";
+        document.getElementById("lesson-progress-bar").style.width = "100%";
+        banner.textContent = "शाबाश! आपने यह लेसन सफलतापूर्वक पूरा कर लिया है।";
+        btn.textContent = "CONTINUE TO PATH ✓";
+
+        if (!state.completedLessons.includes(activeLesson.id)) {
+          state.completedLessons.push(activeLesson.id);
+        }
+        state.xp += 25;
+        saveState();
+        renderUnitsPath();
+        playTone("correct");
+
+        stage.innerHTML = `
+          <div class="text-center py-12 space-y-4">
+            <div class="w-24 h-24 rounded-full bg-emerald-100 border-4 border-emerald-400 text-5xl flex items-center justify-center mx-auto">🏆</div>
+            <h2 class="text-3xl font-black text-slate-800">Lesson Complete!</h2>
+            <p class="text-slate-600 font-bold">+25 XP Earned • Your English fluency is getting stronger every day.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // EXERCISES (Wordbank, MCQ, Speak)
+      const ex = activeLesson.exercises[currentStep];
+      document.getElementById("lesson-step-label").textContent = `${currentStep + 1} / ${activeLesson.exercises.length}`;
+      banner.textContent = "अपना उत्तर चुनें और CHECK बटन दबाएं।";
+      btn.textContent = "CHECK ANSWER";
+      btn.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-base duo-btn-green";
+
+      if (ex.type === "wordbank") {
+        selectedWords = [];
+        const cleanWords = ex.answerEn.split(" ");
+        bankWords = [...cleanWords, ...(ex.distractors || [])].sort(() => Math.random() - 0.5);
+        renderWordBankExercise(ex);
+      } else if (ex.type === "mcq") {
+        selectedMcq = null;
+        renderMcqExercise(ex);
+      } else if (ex.type === "speak") {
+        renderSpeakExercise(ex);
+      }
+    }
+
+    function renderWordBankExercise(ex) {
+      const stage = document.getElementById("lesson-stage");
+      stage.innerHTML = `
+        <div class="space-y-6">
+          <span class="text-xs font-black uppercase bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Translate this sentence</span>
+          <div class="p-5 rounded-3xl border-2 border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
+            <p class="text-xl font-black text-slate-800">${ex.promptHi}</p>
+            <button onclick="speakText(\`${ex.answerEn.replace(/`/g, '')}\`, 0.85)" class="duo-btn-white px-3.5 py-2 rounded-xl text-xs font-black shrink-0">🔊 Hint Audio</button>
+          </div>
+
+          <!-- Selected Words Tray -->
+          <div id="wb-selected" class="min-h-[76px] p-4 rounded-2xl border-2 border-dashed border-slate-300 bg-white flex flex-wrap gap-2 items-center"></div>
+
+          <!-- Available Word Bank -->
+          <div id="wb-bank" class="flex flex-wrap gap-2.5 pt-2"></div>
+        </div>
+      `;
+      updateWordBankUI();
+    }
+
+    function updateWordBankUI() {
+      const selEl = document.getElementById("wb-selected");
+      const bankEl = document.getElementById("wb-bank");
+      if (!selEl || !bankEl) return;
+
+      if (selectedWords.length === 0) {
+        selEl.innerHTML = `<span class="text-slate-400 font-bold text-sm">नीचे दिए गए अंग्रेजी शब्दों पर क्लिक करके वाक्य बनाएं...</span>`;
+      } else {
+        selEl.innerHTML = selectedWords.map((item, idx) => `
+          <button onclick="removeWord(${idx})" class="word-tile bg-blue-50 border-blue-300 text-blue-900">${item.word}</button>
+        `).join("");
+      }
+
+      bankEl.innerHTML = bankWords.map((word, idx) => {
+        const used = selectedWords.some(s => s.bankIdx === idx);
+        return `
+          <button onclick="${used ? '' : `pickWord(${idx})`}" class="word-tile ${used ? 'opacity-25 pointer-events-none' : ''}">
+            ${word}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function pickWord(bankIdx) {
+      if (stepChecked) return;
+      const word = bankWords[bankIdx];
+      speakText(word, 1.0);
+      selectedWords.push({ word, bankIdx });
+      updateWordBankUI();
+    }
+
+    function removeWord(selIdx) {
+      if (stepChecked) return;
+      selectedWords.splice(selIdx, 1);
+      updateWordBankUI();
+    }
+
+    function renderMcqExercise(ex) {
+      const stage = document.getElementById("lesson-stage");
+      stage.innerHTML = `
+        <div class="space-y-6">
+          <span class="text-xs font-black uppercase bg-purple-100 text-purple-800 px-3 py-1 rounded-full">Select the Correct English Sentence</span>
+          <h3 class="text-xl font-black text-slate-800">${ex.promptHi}</h3>
+          <div class="space-y-3" id="mcq-options">
+            ${ex.options.map((opt, idx) => `
+              <button onclick="selectMcqOption(${idx})" id="mcq-opt-${idx}" class="w-full text-left p-4 rounded-2xl duo-btn-white font-extrabold text-base flex items-center justify-between">
+                <span>${opt}</span>
+                <span onclick="event.stopPropagation(); speakText(\`${opt.replace(/`/g, '')}\`, 0.95)" class="px-2.5 py-1 rounded-lg bg-slate-100 text-xs">🔊</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function selectMcqOption(idx) {
+      if (stepChecked) return;
+      selectedMcq = idx;
+      const ex = activeLesson.exercises[currentStep];
+      ex.options.forEach((_, i) => {
+        const el = document.getElementById(`mcq-opt-${i}`);
+        if (i === idx) {
+          el.className = "w-full text-left p-4 rounded-2xl border-2 border-blue-500 border-b-4 bg-blue-50 text-blue-900 font-black text-base flex items-center justify-between";
+        } else {
+          el.className = "w-full text-left p-4 rounded-2xl duo-btn-white font-extrabold text-base flex items-center justify-between";
+        }
+      });
+    }
+
+    function renderSpeakExercise(ex) {
+      const stage = document.getElementById("lesson-stage");
+      stage.innerHTML = `
+        <div class="space-y-6">
+          <span class="text-xs font-black uppercase bg-amber-100 text-amber-800 px-3 py-1 rounded-full">🎙️ Officer Speaking Drill</span>
+          <p class="text-base font-bold text-slate-600">${ex.promptHi}</p>
+          <div class="p-6 rounded-3xl border-2 border-slate-200 bg-slate-50 space-y-4">
+            <p class="text-2xl font-black text-slate-800 leading-snug">"${ex.answerEn}"</p>
+            <div class="flex flex-wrap gap-3">
+              <button onclick="speakText(\`${ex.answerEn.replace(/`/g, '')}\`, 1.0)" class="duo-btn-blue px-4 py-2.5 rounded-xl font-black text-sm">🔊 Listen Normal</button>
+              <button onclick="speakText(\`${ex.answerEn.replace(/`/g, '')}\`, 0.72)" class="duo-btn-white px-4 py-2.5 rounded-xl font-black text-sm">🐢 Listen Slow</button>
+              <button onclick="startMicRecognition()" class="duo-btn-green px-4 py-2.5 rounded-xl font-black text-sm">🎙️ Speak on Mic</button>
+            </div>
+            <p id="mic-transcript" class="text-sm font-extrabold text-emerald-700 pt-2">🔊 पर क्लिक करके सुनें और फिर बिना अटके खुद ज़ोर से बोलें।</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function startMicRecognition() {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const out = document.getElementById("mic-transcript");
+      if (!SpeechRec) {
+        out.textContent = "✓ आपने बोलकर अभ्यास कर लिया है! अब नीचे CHECK ANSWER दबाएं।";
+        return;
+      }
+      const rec = new SpeechRec();
+      rec.lang = "en-IN";
+      out.textContent = "🎙️ Listening... बोलना शुरू करें...";
+      rec.onresult = (e) => {
+        const spoken = e.results[0][0].transcript;
+        out.textContent = `🎙️ You spoke: "${spoken}"`;
+      };
+      rec.onerror = () => {
+        out.textContent = "✓ अपना उच्चारण सुनकर अभ्यास करें और आगे बढ़ें।";
+      };
+      rec.start();
+    }
+
+    function handleLessonPrimaryAction() {
+      if (currentStep === -1) {
+        currentStep = 0;
+        renderLessonStage();
+        return;
+      }
+      if (currentStep >= activeLesson.exercises.length) {
+        closeLesson();
+        return;
+      }
+
+      const ex = activeLesson.exercises[currentStep];
+      const banner = document.getElementById("feedback-banner");
+      const btn = document.getElementById("lesson-action-btn");
+
+      if (stepChecked) {
+        currentStep++;
+        renderLessonStage();
+        return;
+      }
+
+      // Verify Current Exercise
+      let isCorrect = false;
+      let correctText = ex.answerEn || "";
+
+      if (ex.type === "wordbank") {
+        const userSentence = selectedWords.map(s => s.word).join(" ").trim();
+        isCorrect = userSentence.toLowerCase() === ex.answerEn.toLowerCase();
+      } else if (ex.type === "mcq") {
+        if (selectedMcq === null) {
+          alert("कृपया पहले एक विकल्प चुनें!");
+          return;
+        }
+        isCorrect = selectedMcq === ex.correctIndex;
+        correctText = ex.options[ex.correctIndex];
+      } else if (ex.type === "speak") {
+        isCorrect = true;
+      }
+
+      stepChecked = true;
+      if (isCorrect) {
+        playTone("correct");
+        speakText(correctText, 1.0);
+        banner.className = "text-base font-black text-emerald-700";
+        banner.innerHTML = `✅ बिल्कुल सही! <span class="font-bold text-slate-700">${ex.explanation || correctText}</span>`;
+        btn.textContent = "NEXT STEP →";
+      } else {
+        playTone("wrong");
+        banner.className = "text-base font-black text-rose-600";
+        banner.innerHTML = `❌ सही उत्तर: "${correctText}" ${ex.explanation ? `<br><span class="text-xs font-bold text-slate-600">${ex.explanation}</span>` : ""}`;
+        btn.textContent = "GOT IT, CONTINUE →";
+
+        state.mistakes.unshift({
+          promptHi: ex.promptHi,
+          correctEn: correctText
+        });
+        saveState();
+      }
+    }
+
+    // Initialize App
+    updateTopBar();
+    renderUnitsPath();
+  </script>
+</body>
+</html>
