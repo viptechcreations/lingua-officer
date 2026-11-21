@@ -3,7 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22C55E" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>LINGUA OFFICER — Basic to SSB English Mastery Path</title>
+
+  <!-- PWA Manifest & Icon -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="./icon-512.png" />
+  <link rel="apple-touch-icon" href="./icon-512.png" />
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -13,7 +22,6 @@
       color: #0F172A;
       user-select: none;
     }
-    /* Duolingo-style 3D tactile buttons */
     .duo-btn-green {
       background-color: #22C55E;
       border-bottom: 4px solid #15803D;
@@ -92,15 +100,24 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- TOP NAVIGATION BAR (Light, Clean, Duolingo Style) -->
+  <!-- TOP NAVIGATION BAR -->
   <header class="sticky top-0 z-30 bg-white border-b-2 border-slate-200 px-4 py-3">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-500 border-b-4 border-emerald-700 flex items-center justify-center text-white text-2xl font-black shadow-sm">
-          ★
+        <!-- App Logo Icon (Loads icon-512.png with SVG fallback) -->
+        <div class="w-11 h-11 rounded-2xl bg-slate-900 border-b-4 border-emerald-600 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+          <img src="./icon-512.png" alt="Lingua Officer Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+          <svg style="display:none" viewBox="0 0 64 64" class="w-8 h-8">
+            <path d="M32 6L52 14V30C52 44 43 54 32 58C21 54 12 44 12 30V14L32 6Z" fill="#0F172A" stroke="#22C55E" stroke-width="4"/>
+            <polygon points="32,14 35,21 42,21 36,26 38,33 32,29 26,33 28,26 22,21 29,21" fill="#F59E0B"/>
+            <rect x="28" y="34" width="8" height="12" rx="4" fill="#22C55E"/>
+          </svg>
         </div>
         <div>
-          <h1 class="text-xl font-black tracking-tight text-slate-800 leading-none">LINGUA OFFICER</h1>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-black tracking-tight text-slate-800 leading-none">LINGUA OFFICER</h1>
+            <span id="offline-badge" class="hidden text-[10px] font-black uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full border border-amber-300">Offline Mode</span>
+          </div>
           <p class="text-xs font-bold text-slate-500 mt-0.5">Basic (Zero) to SSB Officer Spoken & Written Path</p>
         </div>
       </div>
@@ -118,16 +135,19 @@
         </button>
       </div>
 
-      <!-- Stats Bar -->
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 rounded-xl font-black text-amber-600 text-sm">
+      <!-- Stats & Install Bar -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+        <div class="flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-3 py-1.5 rounded-xl font-black text-amber-600 text-sm" title="Daily Streak">
           🔥 <span id="stat-streak">1</span>
         </div>
-        <div class="flex items-center gap-1.5 bg-blue-50 border-2 border-blue-200 px-3 py-1.5 rounded-xl font-black text-blue-600 text-sm">
+        <div class="flex items-center gap-1.5 bg-blue-50 border-2 border-blue-200 px-3 py-1.5 rounded-xl font-black text-blue-600 text-sm" title="Total XP">
           💎 <span id="stat-xp">0</span> XP
         </div>
         <button onclick="toggleUnlockAll()" id="unlock-btn" class="px-3 py-1.5 rounded-xl text-xs font-extrabold border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">
           🔓 Unlock All Lessons
+        </button>
+        <button id="pwa-install-btn" onclick="installPWA()" class="hidden px-3 py-1.5 rounded-xl text-xs font-black duo-btn-green">
+          📲 Install App
         </button>
       </div>
     </div>
@@ -138,10 +158,9 @@
 
     <!-- TAB 1: DUOLINGO LEARNING PATH -->
     <section id="view-path" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Left/Center: Winding Units Map -->
       <div class="lg:col-span-2 space-y-10" id="units-container"></div>
 
-      <!-- Right Sidebar: Officer Rank & Quick Tips -->
+      <!-- Right Sidebar -->
       <div class="space-y-6">
         <div class="bg-white rounded-3xl border-2 border-slate-200 p-6 shadow-sm">
           <div class="flex items-center justify-between mb-3">
@@ -192,9 +211,8 @@
 
   </main>
 
-  <!-- FULLSCREEN INTERACTIVE LESSON MODAL (DUOLINGO ENGINE) -->
+  <!-- FULLSCREEN INTERACTIVE LESSON MODAL -->
   <div id="lesson-modal" class="fixed inset-0 z-50 bg-white hidden flex-col">
-    <!-- Modal Top Progress Bar -->
     <div class="max-w-3xl w-full mx-auto px-4 pt-5 pb-3 flex items-center gap-4">
       <button onclick="closeLesson()" class="text-slate-400 hover:text-slate-700 text-2xl font-black px-2">✕</button>
       <div class="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
@@ -203,12 +221,10 @@
       <span id="lesson-step-label" class="text-sm font-black text-slate-600">Guide</span>
     </div>
 
-    <!-- Modal Center Dynamic Stage -->
     <div class="flex-1 overflow-y-auto px-4 py-6">
       <div id="lesson-stage" class="max-w-2xl w-full mx-auto"></div>
     </div>
 
-    <!-- Modal Bottom Action Bar -->
     <div id="lesson-footer" class="border-t-2 border-slate-200 bg-white px-4 py-4">
       <div class="max-w-2xl w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div id="feedback-banner" class="text-sm font-bold text-slate-600">
@@ -223,7 +239,43 @@
 
   <script>
     // ============================================================================
-    // COMPLETE ERROR-FREE CURRICULUM: 8 UNITS (BASIC ZERO TO SSB OFFICER LEVEL)
+    // PWA REGISTRATION, INSTALL PROMPT & OFFLINE DETECTION
+    // ============================================================================
+    let deferredInstallPrompt = null;
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btn = document.getElementById("pwa-install-btn");
+      if (btn) btn.classList.remove("hidden");
+    });
+
+    async function installPWA() {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === "accepted") {
+        document.getElementById("pwa-install-btn").classList.add("hidden");
+      }
+      deferredInstallPrompt = null;
+    }
+
+    function updateOnlineStatus() {
+      const badge = document.getElementById("offline-badge");
+      if (badge) badge.classList.toggle("hidden", navigator.onLine);
+    }
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+    updateOnlineStatus();
+
+    // ============================================================================
+    // COMPLETE CURRICULUM: 7 UNITS (BASIC ZERO TO SSB OFFICER LEVEL)
     // ============================================================================
     const CURRICULUM = [
       {
@@ -751,15 +803,57 @@
     ];
 
     // ============================================================================
-    // STATE MANAGEMENT & PERSISTENCE
+    // STATE MANAGEMENT, STREAK LOGIC & TEXT HELPERS (BUGS FIXED)
     // ============================================================================
+    function getTodayDateStr() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    }
+
+    function getYesterdayDateStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+
+    function normalizeText(str) {
+      return (str || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
     let state = JSON.parse(localStorage.getItem("lingua_officer_v1")) || {
       xp: 0,
-      streak: 1,
+      streak: 0,
+      lastActiveDate: null,
       completedLessons: [],
       unlockAll: false,
       mistakes: []
     };
+
+    // Check streak validity on app open
+    function checkDailyStreakOnLoad() {
+      const today = getTodayDateStr();
+      const yesterday = getYesterdayDateStr();
+      if (state.lastActiveDate && state.lastActiveDate !== today && state.lastActiveDate !== yesterday) {
+        state.streak = 0;
+        saveState();
+      }
+    }
+
+    function recordDailyActivity() {
+      const today = getTodayDateStr();
+      const yesterday = getYesterdayDateStr();
+      if (state.lastActiveDate === today) return;
+      if (state.lastActiveDate === yesterday) {
+        state.streak = (state.streak || 0) + 1;
+      } else {
+        state.streak = 1;
+      }
+      state.lastActiveDate = today;
+    }
 
     function saveState() {
       localStorage.setItem("lingua_officer_v1", JSON.stringify(state));
@@ -767,7 +861,7 @@
     }
 
     // ============================================================================
-    // WEB AUDIO SOUND EFFECTS & SPEECH SYNTHESIS (TTS)
+    // SOUND EFFECTS & SPEECH SYNTHESIS (TTS)
     // ============================================================================
     function playTone(type) {
       try {
@@ -802,7 +896,7 @@
     }
 
     // ============================================================================
-    // RENDER LEARNING PATH & VAULT
+    // RENDER LEARNING PATH, VAULT & MISTAKES
     // ============================================================================
     function getAllLessonsFlat() {
       const list = [];
@@ -812,7 +906,7 @@
 
     function updateTopBar() {
       document.getElementById("stat-xp").textContent = state.xp;
-      document.getElementById("stat-streak").textContent = state.streak;
+      document.getElementById("stat-streak").textContent = state.streak || 0;
       document.getElementById("mistake-count").textContent = state.mistakes.length;
 
       const allLessons = getAllLessonsFlat();
@@ -924,16 +1018,25 @@
       if (state.mistakes.length === 0) {
         mistakeEl.innerHTML = `<div class="p-8 text-center text-slate-500 font-bold">अभी तक कोई गलती रिकॉर्ड नहीं हुई है! बहुत बढ़िया! 🎉</div>`;
       } else {
-        mistakeEl.innerHTML = state.mistakes.map(m => `
+        mistakeEl.innerHTML = state.mistakes.map((m, i) => `
           <div class="p-4 rounded-2xl border-2 border-rose-200 bg-rose-50/50 flex items-center justify-between gap-4">
             <div>
               <p class="text-sm font-bold text-slate-600">${m.promptHi}</p>
               <p class="text-base font-black text-emerald-700 mt-1">✓ ${m.correctEn}</p>
             </div>
-            <button onclick="speakText(\`${m.correctEn.replace(/`/g, '')}\`, 0.9)" class="px-3.5 py-2 rounded-xl bg-white border-2 border-slate-200 font-black text-sm">🔊 Listen</button>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="speakText(\`${m.correctEn.replace(/`/g, '')}\`, 0.9)" class="px-3 py-2 rounded-xl bg-white border-2 border-slate-200 font-black text-xs">🔊 Listen</button>
+              <button onclick="removeMistake(${i})" class="px-3 py-2 rounded-xl bg-emerald-100 text-emerald-800 border-2 border-emerald-200 font-black text-xs">✓ Learned</button>
+            </div>
           </div>
         `).join("");
       }
+    }
+
+    function removeMistake(index) {
+      state.mistakes.splice(index, 1);
+      saveState();
+      renderVaultAndMistakes();
     }
 
     function clearMistakes() {
@@ -956,14 +1059,15 @@
     }
 
     // ============================================================================
-    // INTERACTIVE DUOLINGO LESSON ENGINE
+    // INTERACTIVE LESSON ENGINE (WITH REAL MIC SCORING)
     // ============================================================================
     let activeLesson = null;
-    let currentStep = -1; // -1 = Concept Guidebook, 0..n = exercises
+    let currentStep = -1;
     let stepChecked = false;
     let selectedWords = [];
     let bankWords = [];
     let selectedMcq = null;
+    let lastSpokenTranscript = "";
 
     function openLesson(lessonId) {
       const flat = getAllLessonsFlat();
@@ -990,9 +1094,10 @@
       document.getElementById("lesson-progress-bar").style.width = `${pct}%`;
 
       stepChecked = false;
+      lastSpokenTranscript = "";
       banner.className = "text-sm font-bold text-slate-600";
 
-      // STEP -1: HINDI + ENGLISH GUIDEBOOK
+      // STEP -1: GUIDEBOOK
       if (currentStep === -1) {
         document.getElementById("lesson-step-label").textContent = "Concept Guide";
         banner.textContent = "पहले आसान हिंदी में नियम और उदाहरण समझें, फिर प्रैक्टिस शुरू करें।";
@@ -1041,6 +1146,7 @@
           state.completedLessons.push(activeLesson.id);
         }
         state.xp += 25;
+        recordDailyActivity();
         saveState();
         renderUnitsPath();
         playTone("correct");
@@ -1049,16 +1155,18 @@
           <div class="text-center py-12 space-y-4">
             <div class="w-24 h-24 rounded-full bg-emerald-100 border-4 border-emerald-400 text-5xl flex items-center justify-center mx-auto">🏆</div>
             <h2 class="text-3xl font-black text-slate-800">Lesson Complete!</h2>
-            <p class="text-slate-600 font-bold">+25 XP Earned • Your English fluency is getting stronger every day.</p>
+            <p class="text-slate-600 font-bold">+25 XP Earned • Daily Streak: 🔥 ${state.streak} Day(s)</p>
           </div>
         `;
         return;
       }
 
-      // EXERCISES (Wordbank, MCQ, Speak)
+      // EXERCISES
       const ex = activeLesson.exercises[currentStep];
       document.getElementById("lesson-step-label").textContent = `${currentStep + 1} / ${activeLesson.exercises.length}`;
-      banner.textContent = "अपना उत्तर चुनें और CHECK बटन दबाएं।";
+      banner.textContent = ex.type === "speak"
+        ? "माइक पर बोलकर अभ्यास करें (या ऑफलाइन होने पर ज़ोर से बोलकर CHECK दबाएं)।"
+        : "अपना उत्तर चुनें और CHECK ANSWER दबाएं।";
       btn.textContent = "CHECK ANSWER";
       btn.className = "w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-base duo-btn-green";
 
@@ -1084,11 +1192,7 @@
             <p class="text-xl font-black text-slate-800">${ex.promptHi}</p>
             <button onclick="speakText(\`${ex.answerEn.replace(/`/g, '')}\`, 0.85)" class="duo-btn-white px-3.5 py-2 rounded-xl text-xs font-black shrink-0">🔊 Hint Audio</button>
           </div>
-
-          <!-- Selected Words Tray -->
           <div id="wb-selected" class="min-h-[76px] p-4 rounded-2xl border-2 border-dashed border-slate-300 bg-white flex flex-wrap gap-2 items-center"></div>
-
-          <!-- Available Word Bank -->
           <div id="wb-bank" class="flex flex-wrap gap-2.5 pt-2"></div>
         </div>
       `;
@@ -1177,28 +1281,41 @@
               <button onclick="speakText(\`${ex.answerEn.replace(/`/g, '')}\`, 0.72)" class="duo-btn-white px-4 py-2.5 rounded-xl font-black text-sm">🐢 Listen Slow</button>
               <button onclick="startMicRecognition()" class="duo-btn-green px-4 py-2.5 rounded-xl font-black text-sm">🎙️ Speak on Mic</button>
             </div>
-            <p id="mic-transcript" class="text-sm font-extrabold text-emerald-700 pt-2">🔊 पर क्लिक करके सुनें और फिर बिना अटके खुद ज़ोर से बोलें।</p>
+            <p id="mic-transcript" class="text-sm font-extrabold text-emerald-700 pt-2">🔊 सुनें और 🎙️ Speak on Mic दबाकर बोलें।</p>
           </div>
         </div>
       `;
     }
 
+    function calculateMatchScore(expected, spoken) {
+      const expWords = normalizeText(expected).split(" ").filter(Boolean);
+      const spkWords = normalizeText(spoken).split(" ").filter(Boolean);
+      if (expWords.length === 0) return 100;
+      let matched = 0;
+      expWords.forEach(w => {
+        if (spkWords.includes(w)) matched++;
+      });
+      return Math.round((matched / expWords.length) * 100);
+    }
+
     function startMicRecognition() {
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       const out = document.getElementById("mic-transcript");
-      if (!SpeechRec) {
-        out.textContent = "✓ आपने बोलकर अभ्यास कर लिया है! अब नीचे CHECK ANSWER दबाएं।";
+      if (!SpeechRec || !navigator.onLine) {
+        out.textContent = "ℹ️ ऑफलाइन या अनसपोर्टेड ब्राउज़र: ज़ोर से बोलकर अभ्यास करें और CHECK ANSWER दबाएं।";
         return;
       }
       const rec = new SpeechRec();
       rec.lang = "en-IN";
-      out.textContent = "🎙️ Listening... बोलना शुरू करें...";
+      out.textContent = "🎙️ Listening... साफ आवाज़ में बोलें...";
       rec.onresult = (e) => {
-        const spoken = e.results[0][0].transcript;
-        out.textContent = `🎙️ You spoke: "${spoken}"`;
+        lastSpokenTranscript = e.results[0][0].transcript;
+        const ex = activeLesson.exercises[currentStep];
+        const score = calculateMatchScore(ex.answerEn, lastSpokenTranscript);
+        out.innerHTML = `🎙️ You spoke: "<span class="text-slate-800">${lastSpokenTranscript}</span>" — Match: <span class="${score >= 65 ? 'text-emerald-600' : 'text-amber-600'}">${score}%</span>`;
       };
       rec.onerror = () => {
-        out.textContent = "✓ अपना उच्चारण सुनकर अभ्यास करें और आगे बढ़ें।";
+        out.textContent = "ℹ️ माइक एक्सेस नहीं मिला या नेटवर्क धीमा है — ज़ोर से बोलें और CHECK ANSWER दबाएं।";
       };
       rec.start();
     }
@@ -1224,13 +1341,16 @@
         return;
       }
 
-      // Verify Current Exercise
       let isCorrect = false;
       let correctText = ex.answerEn || "";
 
       if (ex.type === "wordbank") {
-        const userSentence = selectedWords.map(s => s.word).join(" ").trim();
-        isCorrect = userSentence.toLowerCase() === ex.answerEn.toLowerCase();
+        if (selectedWords.length === 0) {
+          alert("कृपया पहले शब्दों को चुनकर वाक्य बनाएं!");
+          return;
+        }
+        const userSentence = selectedWords.map(s => s.word).join(" ");
+        isCorrect = normalizeText(userSentence) === normalizeText(ex.answerEn);
       } else if (ex.type === "mcq") {
         if (selectedMcq === null) {
           alert("कृपया पहले एक विकल्प चुनें!");
@@ -1239,7 +1359,21 @@
         isCorrect = selectedMcq === ex.correctIndex;
         correctText = ex.options[ex.correctIndex];
       } else if (ex.type === "speak") {
-        isCorrect = true;
+        if (lastSpokenTranscript) {
+          const score = calculateMatchScore(ex.answerEn, lastSpokenTranscript);
+          isCorrect = score >= 65;
+          if (!isCorrect) {
+            playTone("wrong");
+            banner.className = "text-sm font-black text-amber-600";
+            banner.innerHTML = `⚠️ आपका उच्चारण ${score}% मैच हुआ। एक बार फिर 🎙️ Speak on Mic दबाकर कोशिश करें या NEXT दबाएं।`;
+            btn.textContent = "NEXT STEP →";
+            stepChecked = true;
+            return;
+          }
+        } else {
+          // Offline / Self-practice fallback
+          isCorrect = true;
+        }
       }
 
       stepChecked = true;
@@ -1255,15 +1389,22 @@
         banner.innerHTML = `❌ सही उत्तर: "${correctText}" ${ex.explanation ? `<br><span class="text-xs font-bold text-slate-600">${ex.explanation}</span>` : ""}`;
         btn.textContent = "GOT IT, CONTINUE →";
 
-        state.mistakes.unshift({
-          promptHi: ex.promptHi,
-          correctEn: correctText
-        });
-        saveState();
+        // Prevent duplicate entries in Mistakes Box
+        const alreadySaved = state.mistakes.some(
+          m => normalizeText(m.correctEn) === normalizeText(correctText)
+        );
+        if (!alreadySaved) {
+          state.mistakes.unshift({
+            promptHi: ex.promptHi,
+            correctEn: correctText
+          });
+          saveState();
+        }
       }
     }
 
     // Initialize App
+    checkDailyStreakOnLoad();
     updateTopBar();
     renderUnitsPath();
   </script>
